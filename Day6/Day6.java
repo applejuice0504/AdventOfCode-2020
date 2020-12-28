@@ -27,25 +27,44 @@ public class Day6 {
 				groupCount = hash.size();
 				hash.clear();
 				totalSumCount += groupCount;
-				groupCount = 0;
 			}			
 		}	
 		System.out.println("Total Sum Count: [Part1] " + totalSumCount);		
 		
+		
 		//-------------Part 2------------- 
 		groupCount = 0;
 		totalSumCount = 0;
-		hash.clear();
+		hash.clear();	
 		HashSet<Character> personHash = new HashSet<Character>();
 		
-		for (String str : input) {
-			
-			for (int k = 0; k < str.length(); k++) {
-				personHash.add(str.charAt(k));
-			}
-		}	
-		System.out.println("Total Sum Count: [Part2] " + totalSumCount);
+		//fill hash with first line of input, so it is not empty in the beginning
+		for (char c : input.get(0).toCharArray()) {
+			hash.add(c);
+		}
 		
+		//starting finding the intersections for each group		
+		for (int i = 1; i<input.size(); i++) {
+			
+			//if not at an empty line => generate a temp person hash, that represents one line and save the intersection into hash 
+			if ( !input.get(i).isEmpty() ) {
+				for (char c : input.get(i).toCharArray() ) {
+					personHash.add(c);
+				}
+				hash.retainAll(personHash);
+				personHash.clear();				
+			} else {	//if a empty line is hit, we have one group finished, so count up the size of the current hash, which represents the intersections of all lines of that group
+				groupCount = hash.size();
+				totalSumCount += groupCount;
+				hash.clear();	//clear the hash, and pre-fill it with the next line, for the next group
+				if (i < input.size() - 1) {
+					for (char c : input.get(i+1).toCharArray()) {
+						hash.add(c);
+					}
+				}
+			}
+		}		
+		System.out.println("Total Sum Count: [Part2] " + totalSumCount);
 	}
 	
 	private static ArrayList<String> readInput (String p) {
