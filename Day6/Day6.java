@@ -3,7 +3,6 @@ import java.util.ArrayList;
 import java.io.File; 
 import java.io.FileNotFoundException;
 import java.util.HashSet;
-import java.util.Arrays;
 
 //https://adventofcode.com/2020/day/6
 
@@ -38,31 +37,30 @@ public class Day6 {
 		totalSumCount = 0;
 		hash.clear();	
 		HashSet<Character> personHash = new HashSet<Character>();
-		
-		//fill hash with first line of input, so it is not empty in the beginning
-		for (char c : input.get(0).toCharArray()) {
-			hash.add(c);
-		}
-		
+
+		boolean isFirst = true;	
 		//starting finding the intersections for each group		
-		for (int i = 1; i<input.size(); i++) {
+		for (int i = 0; i<input.size(); i++) {
 			
 			//if not at an empty line => generate a temp person hash, that represents one line and save the intersection into hash 
 			if ( !input.get(i).isEmpty() ) {
+				personHash.clear();
 				for (char c : input.get(i).toCharArray() ) {
 					personHash.add(c);
 				}
-				hash.retainAll(personHash);
-				personHash.clear();				
+				if (isFirst) {
+					hash.addAll(personHash);
+					isFirst = false;
+				}
+				else {
+					hash.retainAll(personHash);
+				}
+			
 			} else {	//if a empty line is hit, we have one group finished, so count up the size of the current hash, which represents the intersections of all lines of that group
 				groupCount = hash.size();
 				totalSumCount += groupCount;
-				hash.clear();	//clear the hash, and pre-fill it with the next line, for the next group
-				if (i < input.size() - 1) {
-					for (char c : input.get(i+1).toCharArray()) {
-						hash.add(c);
-					}
-				}
+				hash.clear();	//clear the hash, and set isFirst to true, so the next line will be completely added to the hash
+				isFirst = true;
 			}
 		}		
 		System.out.println("Total Sum Count: [Part2] " + totalSumCount);
